@@ -2,7 +2,7 @@
 
 # OWASP WrongSecrets [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Want%20to%20dive%20into%20secrets%20management%20and%20do%20some%20hunting?%20try%20this&url=https://github.com/OWASP/wrongsecrets&hashtags=secretsmanagement,secrets,hunting,p0wnableapp,OWASP,WrongSecrets)[<img src="https://raw.githubusercontent.com/mastodon/mastodon/main/app/javascript/images/app-icon.svg" width=16>](https://tootpick.org/#text=Want%20to%20dive%20into%20secrets%20management%20and%20do%20some%20hunting?%20try%20this%0A%0Ahttps://github.com/OWASP/wrongsecrets%20%23secretsmanagement,%20%23secrets,%20%23hunting,%20%23p0wnableapp,%20%23OWASP,%20%23WrongSecrets)
 
-[![Java checkstyle and testing](https://github.com/OWASP/wrongsecrets/actions/workflows/main.yml/badge.svg)](https://github.com/OWASP/wrongsecrets/actions/workflows/main.yml) [![Terraform FMT](https://github.com/OWASP/wrongsecrets/actions/workflows/terraform.yml/badge.svg)](https://github.com/OWASP/wrongsecrets/actions/workflows/terraform.yml) [![Test minikube script (k8s)](https://github.com/OWASP/wrongsecrets/actions/workflows/minikube-k8s-test.yml/badge.svg)](https://github.com/OWASP/wrongsecrets/actions/workflows/minikube-k8s-test.yml) [![Test minikube script (k8s&vault)](https://github.com/OWASP/wrongsecrets/actions/workflows/minikube-vault-test.yml/badge.svg)](https://github.com/OWASP/wrongsecrets/actions/workflows/minikube-vault-test.yml) [![Docker container test](https://github.com/OWASP/wrongsecrets/actions/workflows/container_test.yml/badge.svg)](https://github.com/OWASP/wrongsecrets/actions/workflows/container_test.yml)
+[![Java checkstyle and testing](https://github.com/OWASP/wrongsecrets/actions/workflows/main.yml/badge.svg)](https://github.com/OWASP/wrongsecrets/actions/workflows/main.yml) ![Pre-commit](https://github.com/OWASP/wrongsecrets/actions/workflows/pre-commit.yml/badge.svg)[![Terraform FMT](https://github.com/OWASP/wrongsecrets/actions/workflows/terraform.yml/badge.svg)](https://github.com/OWASP/wrongsecrets/actions/workflows/terraform.yml) [![Test minikube script (k8s)](https://github.com/OWASP/wrongsecrets/actions/workflows/minikube-k8s-test.yml/badge.svg)](https://github.com/OWASP/wrongsecrets/actions/workflows/minikube-k8s-test.yml) [![Test minikube script (k8s&vault)](https://github.com/OWASP/wrongsecrets/actions/workflows/minikube-vault-test.yml/badge.svg)](https://github.com/OWASP/wrongsecrets/actions/workflows/minikube-vault-test.yml) [![Docker container test](https://github.com/OWASP/wrongsecrets/actions/workflows/container_test.yml/badge.svg)](https://github.com/OWASP/wrongsecrets/actions/workflows/container_test.yml)
 [![OWASP Lab Project](https://img.shields.io/badge/OWASP-lab%20project-48A646.svg)](https://owasp.org/projects/)
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7024/badge)](https://bestpractices.coreinfrastructure.org/projects/7024)
 [![Discussions](https://img.shields.io/github/discussions/OWASP/wrongsecrets)](https://github.com/OWASP/wrongsecrets/discussions)
@@ -11,44 +11,43 @@ Welcome to the OWASP WrongSecrets p0wnable app. With this app, we have packed va
 secrets. These can help you to realize whether your secret management is ok. The challenge is to find all the different
 secrets by means of various tools and techniques.
 
-Can you solve all the 27 challenges?
+Can you solve all the 28 challenges?
 ![screenshotOfChallenge1](/images/screenshot.png)
 
 <a href="https://github.com/vshymanskyy/StandWithUkraine/blob/main/README.md"><img src="https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-no-action.svg" /></a>
 
-
 ## Table of contents
-- [Support](#support)
-- [Basic docker exercises](#basic-docker-exercises)
-  - [Running these on Heroku](#running-these-on-heroku)
-  - [Deploying the app under your own heroku account](#deploying-the-app-under-your-own-heroku-account)
-  - [Running on Fly.io](#running-on-flyio)
-- [Basic K8s exercise](#basic-k8s-exercise)
-  - [Minikube based](#minikube-based)
-  - [k8s based](#k8s-based)
-  - [Okteto based](#okteto-based)
-  - [Vault exercises with minikube](#vault-exercises-with-minikube)
-- [Cloud Challenges](#cloud-challenges)
-  - [Running WrongSecrets in AWS](#running-wrongsecrets-in-aws)
-  - [Running WrongSecrets in GCP](#running-wrongsecrets-in-gcp)
-  - [Running WrongSecrets in Azure](#running-wrongsecrets-in-azure)
-  - [Running Challenge15 in your own cloud only](#running-challenge15-in-your-own-cloud-only)
-- [Do you want to play without guidance?](#do-you-want-to-play-without-guidance)
-- [Special thanks & Contributors](#special-thanks--contributors)
-- [Sponsorships](#sponsorships)
-- [Help Wanted](#help-wanted)
-- [Use OWASP WrongSecrets as a secret detection benchmark](#use-owasp-wrongsecrets-as-a-secret-detection-benchmark)
-- [CTF](#ctf)
-  - [CTFD Support](#ctfd-support)
-  - [FBCTF Support](#fbctf-support--experimental--)
-- [Notes on development](#notes-on-development)
-  - [Dependency management](#dependency-management)
-  - [Get the project started in IntelliJ IDEA](#get-the-project-started-in-intellij-idea)
-  - [Automatic reload during development](#automatic-reload-during-development)
-  - [How to add a Challenge](#how-to-add-a-challenge)
-  - [Local testing](#local-testing)
-- [Want to play, but are not allowed to install the tools?](#want-to-play-but-are-not-allowed-to-install-the-tools)
-- [Further reading on secrets management](#further-reading-on-secrets-management)
+
+-   [Support](#support)
+-   [Basic docker exercises](#basic-docker-exercises)
+    -   [Running these on Heroku](#running-these-on-heroku)
+    -   [Running on Fly.io](#running-on-flyio)
+-   [Basic K8s exercise](#basic-k8s-exercise)
+    -   [Minikube based](#minikube-based)
+    -   [k8s based](#k8s-based)
+    -   [Okteto based](#okteto-based)
+    -   [Vault exercises with minikube](#vault-exercises-with-minikube)
+-   [Cloud Challenges](#cloud-challenges)
+    -   [Running WrongSecrets in AWS](#running-wrongsecrets-in-aws)
+    -   [Running WrongSecrets in GCP](#running-wrongsecrets-in-gcp)
+    -   [Running WrongSecrets in Azure](#running-wrongsecrets-in-azure)
+    -   [Running Challenge15 in your own cloud only](#running-challenge15-in-your-own-cloud-only)
+-   [Do you want to play without guidance?](#do-you-want-to-play-without-guidance)
+-   [Special thanks & Contributors](#special-thanks--contributors)
+-   [Sponsorships](#sponsorships)
+-   [Help Wanted](#help-wanted)
+-   [Use OWASP WrongSecrets as a secret detection benchmark](#use-owasp-wrongsecrets-as-a-secret-detection-benchmark)
+-   [CTF](#ctf)
+    -   [CTFD Support](#ctfd-support)
+    -   [FBCTF Support](#fbctf-support--experimental--)
+-   [Notes on development](#notes-on-development)
+    -   [Dependency management](#dependency-management)
+    -   [Get the project started in IntelliJ IDEA](#get-the-project-started-in-intellij-idea)
+    -   [Automatic reload during development](#automatic-reload-during-development)
+    -   [How to add a Challenge](#how-to-add-a-challenge)
+    -   [Local testing](#local-testing)
+-   [Want to play, but are not allowed to install the tools?](#want-to-play-but-are-not-allowed-to-install-the-tools)
+-   [Further reading on secrets management](#further-reading-on-secrets-management)
 
 ## Support
 
@@ -63,7 +62,7 @@ Copyright (c) 2020-2023 Jeroen Willemsen and WrongSecrets contributors.
 
 ## Basic docker exercises
 
-_Can be used for challenges 1-4, 8, 12-27_
+_Can be used for challenges 1-4, 8, 12-28_
 
 For the basic docker exercises you currently require:
 
@@ -99,6 +98,7 @@ Now you can try to find the secrets by means of solving the challenge offered at
 -   [localhost:8080/challenge/25](http://localhost:8080/challenge/25)
 -   [localhost:8080/challenge/26](http://localhost:8080/challenge/26)
 -   [localhost:8080/challenge/27](http://localhost:8080/challenge/27)
+-   [localhost:8080/challenge/28](http://localhost:8080/challenge/28)
 
 Note that these challenges are still very basic, and so are their explanations. Feel free to file a PR to make them look
 better ;-).
@@ -109,20 +109,13 @@ You can test them out at [https://wrongsecrets.herokuapp.com/](https://wrongsecr
 understand that we have NO guarantees that this works. Given we run in Heroku free-tier, please do not fuzz and/or try
 to bring it down: you would be spoiling it for others that want to testdrive it.
 
-### Deploying the app under your own heroku account
-
-1. [Sign up to Heroku](https://signup.heroku.com/) and [log in to your account](https://id.heroku.com/login)
-2. Click the button below and follow the instructions
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
 ### Running on Fly.io
 
 You can test them out at [https://wrongsecrets.fly.dev](https://wrongsecrets.fly.dev) as well! Please understand that we run on a free-tier instance, we cannot give any guarantees. Please do not fuzz and/or try to bring it down: you would be spoiling it for others that want to testdrive it.
 
 ## Basic K8s exercise
 
-_Can be used for challenges 1-6, 8, 12-27_
+_Can be used for challenges 1-6, 8, 12-28_
 
 ### Minikube based
 
@@ -175,7 +168,7 @@ Don't want to go over the hassle of setting up K8S yourself? visit [https://wron
 
 ## Vault exercises with minikube
 
-_Can be used for challenges 1-8, 12-27_
+_Can be used for challenges 1-8, 12-28_
 Make sure you have the following installed:
 
 -   minikube with docker (or comment out line 8 and work at your own k8s setup),
@@ -193,7 +186,7 @@ This is because if you run the start script again it will replace the secret in 
 
 ## Cloud Challenges
 
-_Can be used for challenges 1-27_
+_Can be used for challenges 1-28_
 
 **READ THIS**: Given that the exercises below contain IAM privilege escalation exercises,
 never run this on an account which is related to your production environment or can influence your account-over-arching
@@ -246,6 +239,7 @@ Top contributors:
 -   [Marcin Nowak @MarcinNowak-codes](https://github.com/MarcinNowak-codes)
 -   [Tibor Hercz @tiborhercz](https://github.com/tiborhercz)
 -   [Chris Elbring Jr. @neatzsche](https://github.com/neatzsche)
+-   [Puneeth Y @puneeth072003](https://github.com/puneeth072003)
 -   [Filip Chyla @fchyla](https://github.com/fchyla)
 -   [Dmitry Litosh @Dlitosh](https://github.com/Dlitosh)
 -   [Josh Grossman @tghosth](https://github.com/tghosth)
@@ -308,7 +302,7 @@ The branch will contain a Docker container generation script using which you can
 
 We have 3 ways of playing CTFs:
 
--   The quick "let's play"-approach based on our own Heroku domain [https://wrongsecrets-ctf.herokuapp.com](https://wrongsecrets-ctf.herokuapp.com), which we documente for you here.
+-   The quick "let's play"-approach based on our own Heroku domain [https://wrongsecrets-ctf.herokuapp.com](https://wrongsecrets-ctf.herokuapp.com) or our Okteto domain [https://wrongsecrets-ctf-commjoen.cloud.okteto.net/](https://wrongsecrets-ctf-commjoen.cloud.okteto.net/), which we documented for you here.
 -   A more extended approach documented in [ctf-instructions.md](/ctf-instructions.md).
 -   A fully customizable CTF setup where every player gets its own virtual instance of WrongSecrets and a virtual instance of the wrongsecrets-desktop, so they all can play hassle-free. For this you have to use [the WrongSecrets CTF Party setup](https://github.com/OWASP/wrongsecrets-ctf-party).
 
@@ -317,20 +311,22 @@ We have 3 ways of playing CTFs:
 Want to use CTFD to play a CTF based on the free Heroku wrongsecrets-ctf instance together with CTFD? You can!
 
 NOTE: CTFD support now works based on the [Juiceshop CTF CLI](https://github.com/juice-shop/juice-shop-ctf).
-NOTE-II: [https://wrongsecrets-ctf.herokuapp.com](https://wrongsecrets-ctf.herokuapp.com) is based on a free heroku instance, which takes time to warm up.
-Initial creation of the zip file for CTFD requires you to visit [https://wrongsecrets-ctf.herokuapp.com/api/Challenges](https://wrongsecrets-ctf.herokuapp.com/api/Challenges) once before executing the steps below.
+
+NOTE-II: [https://wrongsecrets-ctf.herokuapp.com](https://wrongsecrets-ctf.herokuapp.com) (temporary down based on lack of oss credits) is based on Heroku and has limited capacity. Alternatively you can use our Okteto setup at [https://wrongsecrets-ctf-commjoen.cloud.okteto.net/](https://wrongsecrets-ctf-commjoen.cloud.okteto.net/), which uses a free tier and needs some time to warm up. However, the Okteto environment does have more resources & supports the kubernetes challenges, unlike our Heroku setup that only supports the Docker challenges.
+
+Initial creation of the zip file for CTFD requires you to visit [https://wrongsecrets-ctf.herokuapp.com/api/Challenges](https://wrongsecrets-ctf.herokuapp.com/api/Challenges) or [https://wrongsecrets-ctf-commjoen.cloud.okteto.net/](https://wrongsecrets-ctf-commjoen.cloud.okteto.net/) once before executing the steps below.
 
 Follow the following steps:
 
 ```shell
     npm install -g juice-shop-ctf-cli@9.1.0
-    juice-shop-ctf #choose ctfd and https://wrongsecrets-ctf.herokuapp.com as domain. No trailing slash! The key is 'TRwzkRJnHOTckssAeyJbysWgP!Qc2T', feel free to enable hints. We do not support snippets or links/urls to code or hints.
+    juice-shop-ctf #choose ctfd and https://wrongsecrets-ctf.herokuapp.com (or https://wrongsecrets-ctf-commjoen.cloud.okteto.net/) as domain. No trailing slash! The key is 'TRwzkRJnHOTckssAeyJbysWgP!Qc2T', feel free to enable hints. We do not support snippets or links/urls to code or hints.
     docker run -p 8001:8000 -it ctfd/ctfd:3.4.3
 ```
 
 Now visit the CTFD instance at [http://localhost:8001](http://localhost:8001) and setup your CTF.
 Then use the administrative backup function to import the zipfile you created with the juice-shop-ctf command.
-Game on using [https://wrongsecrets-ctf.herokuapp.com](https://wrongsecrets-ctf.herokuapp.com)!
+Game on using [https://wrongsecrets-ctf.herokuapp.com](https://wrongsecrets-ctf.herokuapp.com) or [https://wrongsecrets-ctf-commjoen.cloud.okteto.net/](https://wrongsecrets-ctf-commjoen.cloud.okteto.net/)!
 Want to setup your own? You can! Watch out for people finding your key though, so secure it properly: make sure the running container with the actual ctf-key is not exposed to the audience, similar to our heroku container.
 
 ## FBCTF Support (Experimental!)
@@ -342,12 +338,12 @@ Then follow [https://github.com/facebookarchive/fbctf/wiki/Quick-Setup-Guide](ht
 
 ## Notes on development
 
-For development on local machine use the `local` profile `./mvnw spring-boot:run -Dspring-boot.run.profiles=local`
+For development on local machine use the `local` profile `./mvnw spring-boot:run -Dspring-boot.run.profiles=local,without-vault`
 
 If you want to test against vault without K8s: start vault locally with
 
 ```shell
- export VAULT_ADDR='http://127.0.0.1:8200'
+ export SPRING_CLOUD_VAULT_URI='http://127.0.0.1:8200'
  export VAULT_API_ADDR='http://127.0.0.1:8200'
  vault server -dev
 ```
@@ -355,8 +351,8 @@ If you want to test against vault without K8s: start vault locally with
 and in your next terminal, do (with the token from the previous commands):
 
 ```shell
-export VAULT_ADDR='http://127.0.0.1:8200'
-export VAULT_TOKEN='<TOKENHERE>'
+export SPRING_CLOUD_VAULT_URI='http://127.0.0.1:8200'
+export SPRING_CLOUD_VAULT_TOKEN='<TOKENHERE>'
 vault token create -id="00000000-0000-0000-0000-000000000000" -policy="root"
 vault kv put secret/secret-challenge vaultpassword.password="$(openssl rand -base64 16)"
 ```
@@ -388,12 +384,12 @@ Requirements: make sure you have the following tools installed: [Docker](https:/
 2. Import the project in IntelliJ (e.g. import as mvn project / local sources)
 3. Go to the project settings and make sure it uses Java19 (And that the JDK can be found)
 4. Go to the IDE settings>Language & Frameworks > Lombok and make sure Lombok processing is enabled
-5. Open the Maven Tab in your IDEA and run "Reload All Maven Projects" to make the system sync and download everything.
+5. Open the Maven Tab in your IDEA and run "Reload All Maven Projects" to make the system sync and download everything. Next, in that same tab use the "install" option as part of the OWASP WrongSecrets Lifecycle to genereate the asciidoc and such.
 6. Now run the `main` method in `org.owasp.wrongsecrets.WrongSecretsApplication.java`. This should fail with a stack trace.
 7. Now go to the run configuration of the app and make sure you have the active profile `without-vault`. This is done by setting the VM options arguments to `-Dserver.port=8080 -Dspring.profiles.active=local,without-vault`. Set `K8S_ENV=docker` as environment argument.
 8. Repeat step 6: run the app again, you should have a properly running application which is visitable in your browser at http://localhost:8080.
 
-**Pictorial Guide** on how to get the project started in IntelliJ IDEA is available at [*Contributing.md*](https://github.com/OWASP/wrongsecrets/blob/master/CONTRIBUTING.md#how-to-get-started-with-the-project-in-intellij-idea).
+**Pictorial Guide** on how to get the project started in IntelliJ IDEA is available at [_Contributing.md_](https://github.com/OWASP/wrongsecrets/blob/master/CONTRIBUTING.md#how-to-get-started-with-the-project-in-intellij-idea).
 
 Feel free to edit and propose changes via pull requests. Be sure to follow our guidance in the [documentation](https://github.com/OWASP/wrongsecrets/blob/master/CONTRIBUTING.md) to get your work accepted.
 
@@ -421,7 +417,7 @@ Follow the steps below on adding a challenge:
 4. Don't forget to add `@Order` annotation to your challenge ;-).
 5. Review the [CONTRIBUTING guide](CONTRIBUTING.md) for setting up your contributing environment and writing good commit messages.
 
-For more details please refer [*Contributing.md*](https://github.com/OWASP/wrongsecrets/blob/master/CONTRIBUTING.md#how-to-add-a-challenge).
+For more details please refer [_Contributing.md_](https://github.com/OWASP/wrongsecrets/blob/master/CONTRIBUTING.md#how-to-add-a-challenge).
 
 If you want to move existing cloud challenges to another cloud: extend Challenge classes in the `org.owasp.wrongsecrets.challenges.cloud` package and make sure you add the required Terraform in a folder with the separate cloud identified. Make sure that the environment is added to `org.owasp.wrongsecrets.RuntimeEnvironment`.
 Collaborate with the others at the project to get your container running so you can test at the cloud account.
