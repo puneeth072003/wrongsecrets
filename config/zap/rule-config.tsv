@@ -10,3 +10,12 @@
 10110	IGNORE	(Dangerous JS Functions)
 90033	IGNORE	(Loosely Scoped Cookie)
 10096	IGNORE	(Timestamp Disclosure - Unix)
+10112	IGNORE	Session Management Response Identified
+10105	IGNORE	Authentication Credentials Captured
+90003	IGNORE	Sub Resource Integrity Attribute Missing
+10094	IGNORE	Base64 Disclosure
+90005	IGNORE	Sec-Fetch-Dest Header is Missing
+10003	IGNORE	Vulnerable JS Library
+90004	IGNORE	Insufficient Site Isolation Against Spectre Vulnerability
+2	IGNORE	Private IP Disclosure
+90022	IGNORE	Application Error Disclosure

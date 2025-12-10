@@ -5,14 +5,13 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.0.6</version>
-    <relativePath></relativePath>
+    <version>3.5.8</version>
     <!-- lookup parent from repository -->
   </parent>
 
   <groupId>org.owasp</groupId>
   <artifactId>wrongsecrets</artifactId>
-  <version>1.6.1-SNAPSHOT</version>
+  <version>1.12.9-SNAPSHOT</version>
 
   <name>OWASP WrongSecrets</name>
   <description>Examples with how to not use secrets</description>
@@ -44,27 +43,32 @@
   <!--        </snapshotRepository>-->
   <!--    </distributionManagement>-->
   <properties>
-    <KeePassJava2.version>2.1.4</KeePassJava2.version>
-    <asciidoctor.maven.plugin.version>2.2.3</asciidoctor.maven.plugin.version>
-    <asciidoctorj.version>2.5.8</asciidoctorj.version>
-    <aws.sdk.version>2.20.56</aws.sdk.version>
-    <bootstrap.version>5.2.3</bootstrap.version>
-    <com.azure.spring.version>5.1.0</com.azure.spring.version>
-    <cyclonedx.core.version>7.3.2</cyclonedx.core.version>
-    <datatables.version>1.13.2</datatables.version>
-    <dependency-check-maven.version>8.2.1</dependency-check-maven.version>
-    <gcp.sdk.version>4.2.0</gcp.sdk.version>
+    <KeePassJava2.version>2.2.4</KeePassJava2.version>
+    <asciidoctor.maven.plugin.version>3.2.0</asciidoctor.maven.plugin.version>
+    <asciidoctorj.version>3.0.1</asciidoctorj.version>
+    <aws.sdk.version>2.35.8</aws.sdk.version>
+    <bootstrap.version>5.3.8</bootstrap.version>
+    <com.azure.spring.version>6.0.0</com.azure.spring.version>
+    <cyclonedx.core.version>11.0.1</cyclonedx.core.version>
+    <datatables.version>2.3.2</datatables.version>
+    <dependency-check-maven.version>12.1.9</dependency-check-maven.version>
+    <gatling-maven-plugin.version>4.20.8</gatling-maven-plugin.version>
+    <gatling.version>3.14.9</gatling.version>
+    <gcp.sdk.version>7.3.2</gcp.sdk.version>
     <github.button.version>2.14.1</github.button.version>
-    <java.version>19</java.version>
-    <jquery.version>3.6.4</jquery.version>
-    <jruby.version>9.4.2.0</jruby.version>
-    <lombok.version>1.18.26</lombok.version>
-    <maven.compiler.target>19</maven.compiler.target>
-    <spring.cloud-version>2022.0.2</spring.cloud-version>
-    <spring.security.version>6.0.2</spring.security.version>
-    <system-stubs-jupiter.version>2.0.2</system-stubs-jupiter.version>
-    <thymeleaf-extras-springsecurity6.version>3.1.1.RELEASE</thymeleaf-extras-springsecurity6.version>
-    <thymeleaf.layout.version>3.2.1</thymeleaf.layout.version>
+    <io.netty.version>4.1.118.Final</io.netty.version>
+    <java.version>25</java.version>
+    <jquery.version>3.7.1</jquery.version>
+    <jruby.version>10.0.2.0</jruby.version>
+    <lombok.version>1.18.42</lombok.version>
+    <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+    <maven.compiler.proc>full</maven.compiler.proc>
+    <maven.compiler.target>25</maven.compiler.target>
+    <spring.cloud-version>2025.0.0</spring.cloud-version>
+    <spring.security.version>6.2.3</spring.security.version>
+    <system-stubs-jupiter.version>2.1.8</system-stubs-jupiter.version>
+    <thymeleaf-extras-springsecurity6.version>3.1.3.RELEASE</thymeleaf-extras-springsecurity6.version>
+    <thymeleaf.layout.version>3.4.0</thymeleaf.layout.version>
   </properties>
 
   <dependencyManagement>
@@ -77,6 +81,12 @@
         <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers-bom</artifactId>
+        <version>${testcontainers.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>spring-cloud-gcp-dependencies</artifactId>
         <version>${gcp.sdk.version}</version>
@@ -87,6 +97,14 @@
         <groupId>com.azure.spring</groupId>
         <artifactId>spring-cloud-azure-dependencies</artifactId>
         <version>${com.azure.spring.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-bom</artifactId>
+        <version>${io.netty.version}</version>
+        <!-- Explicitly define the Netty version to be in sync with the Azure one otherwise a warning is shown -->
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -104,6 +122,10 @@
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+    </dependency>
     <dependency>
       <groupId>nz.net.ultraq.thymeleaf</groupId>
       <artifactId>thymeleaf-layout-dialect</artifactId>
@@ -136,6 +158,21 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
       <version>${spring-security.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>vault</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>junit-jupiter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>1.21.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -181,6 +218,21 @@
       <version>${jruby.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby</artifactId>
+      <version>${jruby.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-stdlib</artifactId>
+      <version>${jruby.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-base</artifactId>
+      <version>${jruby.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>bootstrap</artifactId>
       <version>${bootstrap.version}</version>
@@ -212,7 +264,7 @@
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-      <version>2.1.0</version>
+      <version>2.8.14</version>
     </dependency>
     <dependency>
       <groupId>com.azure.spring</groupId>
@@ -233,6 +285,13 @@
     </dependency>
 
     <dependency>
+      <groupId>io.gatling.highcharts</groupId>
+      <artifactId>gatling-charts-highcharts</artifactId>
+      <version>${gatling.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.cyclonedx</groupId>
       <artifactId>cyclonedx-core-java</artifactId>
       <version>${cyclonedx.core.version}</version>
@@ -245,43 +304,64 @@
       <type>maven-plugin</type>
     </dependency>
     <dependency>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit-junit5</artifactId>
+      <version>1.4.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
-      <version>4.7.3</version>
+      <version>4.9.8</version>
     </dependency>
-    <!--        <dependency>-->
-    <!--            <groupId>com.h2database</groupId>-->
-    <!--            <artifactId>h2</artifactId>-->
-    <!--            <version>2.1.214</version>-->
-    <!--        </dependency>-->
+    <dependency>
+      <groupId>io.github.wimdeblauwe</groupId>
+      <artifactId>testcontainers-cypress</artifactId>
+      <version>1.9.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.vault</groupId>
+      <artifactId>spring-vault-core</artifactId>
+      <version>3.2.0</version>
+    </dependency>
   </dependencies>
 
   <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <targetPath>e2e</targetPath>
+        <directory>src/test/e2e</directory>
+      </testResource>
+    </testResources>
     <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.2.2</version>
+          <version>3.6.0</version>
           <dependencies>
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>10.10.0</version>
+              <version>11.1.0</version>
             </dependency>
           </dependencies>
         </plugin>
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.7.3.4</version>
+          <version>4.9.8.2</version>
           <configuration>
             <omitVisitors>FindReturnRef</omitVisitors>
             <plugins>
               <plugin>
                 <groupId>com.h3xstream.findsecbugs</groupId>
                 <artifactId>findsecbugs-plugin</artifactId>
-                <version>1.12.0</version>
+                <version>1.14.0</version>
               </plugin>
             </plugins>
           </configuration>
@@ -290,7 +370,7 @@
             <dependency>
               <groupId>com.github.spotbugs</groupId>
               <artifactId>spotbugs</artifactId>
-              <version>4.7.3</version>
+              <version>4.9.8</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -317,30 +397,11 @@
             <!-- -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000-->
           </jvmArguments>
         </configuration>
-        <executions>
-          <execution>
-            <id>start-app</id>
-            <goals>
-              <goal>start</goal>
-            </goals>
-            <phase>pre-integration-test</phase>
-            <configuration>
-              <profiles>local,without-vault</profiles>
-            </configuration>
-          </execution>
-          <execution>
-            <id>stop-app</id>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-            <phase>post-integration-test</phase>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.2.2</version>
+        <version>3.6.0</version>
         <configuration>
           <consoleOutput>true</consoleOutput>
           <failsOnError>true</failsOnError>
@@ -367,7 +428,7 @@
             </goals>
             <phase>compile</phase>
             <configuration>
-              <headerFooter>false</headerFooter>
+              <standalone>false</standalone>
               <attributes>
                 <docType>null</docType>
               </attributes>
@@ -378,7 +439,7 @@
       <plugin>
         <groupId>org.cyclonedx</groupId>
         <artifactId>cyclonedx-maven-plugin</artifactId>
-        <version>2.7.8</version>
+        <version>2.9.1</version>
         <configuration>
           <projectType>library</projectType>
           <schemaVersion>1.3</schemaVersion>
@@ -405,6 +466,14 @@
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-maven</artifactId>
         <version>${dependency-check-maven.version}</version>
+        <configuration>
+          <nvdApiKey>27a3071a-9d40-42f2-ac92-74bebbc4bdeb</nvdApiKey>
+          <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+          <ossIndexServerId>ossindex</ossIndexServerId>
+          <!-- server id configured in settings.xml-->
+          <ossindexAnalyzerEnabled>true</ossindexAnalyzerEnabled>
+          <!--disable when getting 401 errors-->
+        </configuration>
         <executions>
           <execution>
             <goals>
@@ -413,11 +482,10 @@
           </execution>
         </executions>
       </plugin>
-      <!-- todo: #178 add the missing plugins and profiles from https://central.sonatype.org/publish/publish-maven/-->
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.12.1</version>
+        <version>1.15.4</version>
         <executions>
           <execution>
             <id>install node and npm</id>
@@ -426,7 +494,7 @@
             </goals>
             <phase>generate-resources</phase>
             <configuration>
-              <nodeVersion>v16.13.2</nodeVersion>
+              <nodeVersion>v24.5.0</nodeVersion>
               <!-- download node from https://nodejs.org/dist/ -->
               <workingDirectory>js</workingDirectory>
             </configuration>
@@ -447,14 +515,13 @@
       <plugin>
         <groupId>org.springdoc</groupId>
         <artifactId>springdoc-openapi-maven-plugin</artifactId>
-        <version>1.4</version>
+        <version>1.5</version>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.6.2</version>
         <configuration>
-
           <executable>./js/node_modules/.bin/javascript-obfuscator${script.extension}</executable>
           <arguments>
             <argument>./js/index.js</argument>
@@ -469,47 +536,21 @@
             </goals>
             <phase>generate-resources</phase>
           </execution>
-          <execution>
-            <id>npm-install</id>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <phase>integration-test</phase>
-            <configuration>
-              <executable>npm</executable>
-              <arguments>
-                <argument>install</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>xcypress-test</id>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <phase>integration-test</phase>
-            <configuration>
-              <executable>npm</executable>
-              <arguments>
-                <argument>run</argument>
-                <argument>test:ci</argument>
-              </arguments>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
         <configuration>
-          <source>19</source>
-          <target>19</target>
+          <source>23</source>
+          <target>23</target>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>tidy-maven-plugin</artifactId>
-        <version>1.2.0</version>
+        <version>1.4.0</version>
         <executions>
           <execution>
             <id>validate</id>
@@ -523,7 +564,7 @@
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
-        <version>2.36.0</version>
+        <version>3.1.0</version>
         <configuration>
           <formats>
             <format>
@@ -573,6 +614,19 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>io.gatling</groupId>
+        <artifactId>gatling-maven-plugin</artifactId>
+        <version>${gatling-maven-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.4</version>
+        <configuration>
+          <argLine>-Dspring.profiles.active=test,maven-test</argLine>
+        </configuration>
       </plugin>
     </plugins>
   </build>

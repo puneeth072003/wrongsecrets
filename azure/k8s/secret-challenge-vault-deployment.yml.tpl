@@ -20,7 +20,25 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      creationTimestamp: "2020-10-28T20:21:04Z"
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/tls-skip-verify: "true"
+        vault.hashicorp.com/namespace: "default"
+        vault.hashicorp.com/log-level: debug
+        vault.hashicorp.com/agent-inject-secret-challenge46: "secret/data/injected"
+        vault.hashicorp.com/agent-inject-template-challenge46: |
+          {{ with secret "/secret/data/injected" }}
+            {{ range $k, $v := .Data.data }}
+              {{ printf "echo %s=%s" $k $v }}
+            {{ end }}
+          {{ end }}
+        vault.hashicorp.com/agent-inject-secret-challenge47: "secret/data/codified"
+        vault.hashicorp.com/agent-inject-template-challenge47: |
+          {{ with secret "secret/data/codified" }}
+              export challenge47secret="isthiswhatweneed?"
+          {{ end }}
+        vault.hashicorp.com/role: "secret-challenge"
+      creationTimestamp: "2024-03-07T10:21:04Z"
       labels:
         app: secret-challenge
         aadpodidbinding: wrongsecrets-pod-id
@@ -30,6 +48,8 @@ spec:
         runAsUser: 2000
         runAsGroup: 2000
         fsGroup: 2000
+        seccompProfile:
+            type: RuntimeDefault
       serviceAccountName: vault
       volumes:
         - name: 'ephemeral'
@@ -41,9 +61,11 @@ spec:
             volumeAttributes:
               secretProviderClass: "azure-wrongsecrets-vault"
       containers:
-        - image: jeroenwillemsen/wrongsecrets:1.6.4-k8s-vault
+        - image: jeroenwillemsen/wrongsecrets:1.12.9-k8s-vault
           imagePullPolicy: IfNotPresent
           name: secret-challenge
+          command: ["/bin/sh"]
+          args: ["-c", "source /vault/secrets/challenge46 && source /vault/secrets/challenge47 && java -jar -Dspring.profiles.active=kubernetes-vault -Dspringdoc.swagger-ui.enabled=true -Dspringdoc.api-docs.enabled=true -D /application/application.jar"]
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -111,6 +133,11 @@ spec:
                 secretKeyRef:
                   name: challenge33
                   key: answer
+            - name: SEALED_SECRET_ANSWER
+              valueFrom:
+                secretKeyRef:
+                  name: challenge48secret
+                  key: secret
             - name: SPRING_CLOUD_VAULT_URI
               value: "http://vault.vault.svc.cluster.local:8200"
             - name: JWT_PATH

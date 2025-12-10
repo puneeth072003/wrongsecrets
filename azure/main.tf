@@ -15,9 +15,19 @@ data "http" "ip" {
 }
 
 provider "azurerm" {
-  features {}
+  features {
+    key_vault {
+      purge_soft_delete_on_destroy          = false
+      recover_soft_deleted_key_vaults       = true
+      purge_soft_deleted_secrets_on_destroy = false
+      purge_soft_deleted_keys_on_destroy    = false
+      recover_soft_deleted_secrets          = false
+    }
+  }
+  #requieres to export ARM_SUBSCRIPTION_ID=00000000-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  # subscription_id = "00000000-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
-  skip_provider_registration = true
+  resource_provider_registrations = "none"
 }
 
 data "azurerm_client_config" "current" {}

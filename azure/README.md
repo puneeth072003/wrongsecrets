@@ -8,12 +8,23 @@ Please make sure that the account in which you run this exercise has either Log 
 Have the following tools installed:
 
 -   az CLI - [Installation](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
--   Tfenv (Optional) - [Installation](https://github.com/tfutils/tfenv)
--   Terraform CLI - [Installation](https://learn.hashicorp.com/tutorials/terraform/install-cli)
--   Wget - [Installation](https://www.jcchouinard.com/wget/)
--   Helm [Installation](https://helm.sh/docs/intro/install/)
--   Kubectl [Installation](https://kubernetes.io/docs/tasks/tools/)
+-   cat
+-   curl
+-   envsubst
+-   grep
+-   Helm [Installation](https://helm.sh/docs/intro/install/) version 3.x.x or above
 -   jq [Installation](https://stedolan.github.io/jq/download/)
+-   openssl
+-   Kubectl [Installation](https://kubernetes.io/docs/tasks/tools/)
+-   sed
+-   Terraform CLI - [Installation](https://developer.hashicorp.com/terraform/install)
+-   Tfenv (Optional) - [Installation](https://github.com/tfutils/tfenv)
+-   Vault - [Installation](https://developer.hashicorp.com/vault/install)
+-   Wget - [Installation](https://www.jcchouinard.com/wget/)
+
+
+
+az cat curl envsubst grep helm jq kubectl openssl sed terraform vault
 
 Make sure you have an active subscription at Azure for which you have configured the credentials on the system where you will execute the steps below.
 
@@ -52,15 +63,16 @@ The storage account name should be in the output. Please use that to configure t
 
 1. Set either a new resource group or use an existing resource group in `main.tf` (it defaults to the existing `OWASP-Projects` resource group). Note that you'll need to find/replace references to "data.azurerm_resource_group.default" to "arurerm_resource_group.default" if you want to create a new one.
 2. check whether you have the right project by doing `az account show` (after `az login`). Want to set the project as your default? Use `az account set --subscription <.id here>`.
-3. If not yet enabled, register the required services for the subscription, run:
+3. do `export ARM_SUBSCRIPTION_ID=<.id here>`.
+4. If not yet enabled, register the required services for the subscription, run:
     - `az provider register --namespace Microsoft.ContainerService`
     - `az provider register --namespace Microsoft.KeyVault`
     - `az provider register --namespace Microsoft.ManagedIdentity`
-4. Run `terraform init` (if required, use `tfenv` to select TF 0.14.0 or higher )
-5. Run `terraform plan` to see what will be created (optional).
-6. Run `terraform apply`. Note: the apply will take 5 to 20 minutes depending on the speed of the Azure backplane.
-7. Run `./k8s-vault-azure-start.sh`. Your kubeconfig file will automatically be updated.
-8. (Optional) To make the app available over a load balancer, run `kubectl apply -f ./k8s/lb.yml`, then look for the public IP using `kubectl describe service wrongsecrets-lb`. The app should be available on HTTP port 80 within a few minutes.
+5. Run `terraform init` (if required, use `tfenv` to select TF 0.14.0 or higher )
+6. Run `terraform plan` to see what will be created (optional).
+7. Run `terraform apply`. Note: the apply will take 5 to 20 minutes depending on the speed of the Azure backplane.
+8. Run `./k8s-vault-azure-start.sh`. Your kubeconfig file will automatically be updated.
+9. (Optional) To make the app available over a load balancer, run `kubectl apply -f ./k8s/lb.yml`, then look for the public IP using `kubectl describe service wrongsecrets-lb`. The app should be available on HTTP port 80 within a few minutes.
 
 Your AKS cluster should be visible in your resource group. Want a different region? You can modify `terraform.tfvars` or input it directly using the `region` variable in plan/apply.
 
@@ -89,31 +101,18 @@ When you're done:
 2. Can you easily obtain the AKS managed identity of the Node?
 3. Can you get the secrets in the Key vault? Which paths do you see?
 
+## Running Terratest
+
+Want to see if the setup still works? You can use terratest to check if the current setup works via automated terratest tests, for this you need to make sure that you have installed terraform and Go version 1.21. Next, you will need to install the modules and set up credentials.
+
+1. Run `go mod download && go mod tidy`
+2. Run `az login` and make sure you are on the right subscription. If necessary, use `az account list` and `az account set --subscription <your-subscription-id-here>`. and then do `export ARM_SUBSCRIPTION_ID=<.id here>`.
+3. Run `go test -timeout 99999s`. The default timeout is 10 min, which is too short for our purposes. We need to override that.
+
 ## Terraform documentation
 The documentation below is auto-generated to give insight on what's created via Terraform.
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
-
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.1 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.54.0 |
-| <a name="requirement_http"></a> [http](#requirement\_http) | ~> 3.3.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.5.1 |
-
-## Providers
-
-| Name | Version |
-|------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.54.0 |
-| <a name="provider_http"></a> [http](#provider\_http) | 3.3.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.5.1 |
-
-## Modules
-
-No modules.
-
+<!-- BEGIN_TF_DOCS -->
 ## Resources
 
 | Name | Type |
@@ -143,7 +142,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The AKS cluster name | `string` | `"wrongsecrets-exercise-cluster"` | no |
-| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | The AKS cluster version to use | `string` | `"1.25"` | no |
+| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | The AKS cluster version to use | `string` | `"1.34"` | no |
 | <a name="input_region"></a> [region](#input\_region) | The Azure region to use | `string` | `"East US"` | no |
 
 ## Outputs
@@ -160,4 +159,4 @@ No modules.
 | <a name="output_tenant_id"></a> [tenant\_id](#output\_tenant\_id) | Azure tenant ID |
 | <a name="output_vault_name"></a> [vault\_name](#output\_vault\_name) | Vault name |
 | <a name="output_vault_uri"></a> [vault\_uri](#output\_vault\_uri) | Vault URI |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->

@@ -5,12 +5,31 @@
 
 source ../scripts/check-available-commands.sh
 
-checkCommandsAvailable helm jq vault sed grep cat aws
+checkCommandsAvailable aws cat curl grep helm jq kubectl openssl sed terraform vault
 
-AWS_REGION="eu-west-1"
+if test -n "${AWS_REGION-}"; then
+  echo "AWS_REGION is set to <$AWS_REGION>"
+else
+  AWS_REGION=eu-west-1
+  echo "AWS_REGION is not set or empty, defaulting to ${AWS_REGION}"
+fi
+
+if test -n "${CLUSTERNAME-}"; then
+  echo "CLUSTERNAME is set to <$CLUSTERNAME>"
+else
+  CLUSTERNAME=wrongsecrets
+  echo "CLUSTERNAME is not set or empty, defaulting to ${CLUSTERNAME}"
+fi
+
+aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTERNAME --kubeconfig ~/.kube/wrongsecrets
+
+export KUBECONFIG=~/.kube/wrongsecrets
 
 echo "This is a script to bootstrap the configuration. You need to have installed: helm, kubectl, jq, vault, grep, cat, sed, and awscli, and is only tested on mac, Debian and Ubuntu"
 echo "This script is based on the steps defined in https://learn.hashicorp.com/tutorials/vault/kubernetes-minikube. Vault is awesome!"
+
+echo "Setting kubeconfig to wrongsecrets-exercise-cluster"
+aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTERNAME
 
 echo "Setting up workspace PSA to restricted for default"
 kubectl apply -f ../k8s/workspace-psa.yml
@@ -22,6 +41,18 @@ else
   kubectl apply -f ../k8s/secrets-config.yml
 fi
 
+echo "Setting up the bitnami sealed secret controler"
+kubectl apply -f https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.28.0/controller.yaml
+kubectl apply -f ../k8s/sealed-secret-controller.yaml
+kubectl apply -f ../k8s/main.key
+kubectl delete pod -n kube-system -l name=sealed-secrets-controller
+kubectl create -f ../k8s/sealed-challenge48.json
+echo "finishing up the sealed secret controler part"
+echo "do you need to decrypt and/or handle things for the sealed secret use kubeseal"
+
+echo "Setting up challenge 53"
+kubectl apply -f ../k8s/challenge53/secret-challenge53.yml
+
 kubectl get secrets | grep 'funnystuff' &>/dev/null
 if [ $? == 0 ]; then
   echo "secrets secret is already installed"
@@ -30,15 +61,8 @@ else
   kubectl apply -f ../k8s/challenge33.yml
 fi
 
-kubectl get sa ebs-csi-controller-sa  -n kube-system | grep '1'  &>/dev/null
-if [ $? == 0 ]; then
-  echo "EBS CSI driver is installed, skipping (1 secret found)"
-else
-  echo "Installing the EBS CSI Driver from https://github.com/kubernetes-sigs/aws-ebs-csi-driver/blob/master/docs/install.md as AWS makes shit hard on us"
-  kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.12"
-fi
-
-source ../scripts/install-consul.sh
+echo "Setting up gp3 storage class..."
+kubectl apply -f ./k8s/ebs-csi-gp3.yaml
 
 source ../scripts/install-vault.sh
 

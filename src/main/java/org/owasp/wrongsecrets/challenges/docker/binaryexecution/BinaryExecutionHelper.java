@@ -1,5 +1,8 @@
 package org.owasp.wrongsecrets.challenges.docker.binaryexecution;
 
+import static org.owasp.wrongsecrets.Challenges.ErrorResponses.DOWNLOAD_DOTNET_ERROR;
+import static org.owasp.wrongsecrets.Challenges.ErrorResponses.EXECUTION_ERROR;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -14,12 +17,12 @@ import org.springframework.util.ResourceUtils;
 @Slf4j
 public class BinaryExecutionHelper {
 
-  private enum Operation {
+  private enum BinaryInstructionForFile {
     Spoil,
     Guess
   }
 
-  public static final String ERROR_EXECUTION = "Error with executing";
+  public static final String ERROR_EXECUTION = EXECUTION_ERROR;
   private final int challengeNumber;
 
   private Exception executionException;
@@ -42,9 +45,9 @@ public class BinaryExecutionHelper {
       File execFile = createTempExecutable("wrongsecrets-golang");
       String result;
       if (Strings.isNullOrEmpty(guess)) {
-        result = executeCommand(execFile, Operation.Spoil, "");
+        result = executeCommand(execFile, BinaryInstructionForFile.Spoil, "");
       } else {
-        result = executeCommand(execFile, Operation.Guess, guess);
+        result = executeCommand(execFile, BinaryInstructionForFile.Guess, guess);
       }
       log.info(
           "stdout challenge {}: {}",
@@ -55,6 +58,9 @@ public class BinaryExecutionHelper {
       return result;
     } catch (Exception e) {
       log.warn("Error executing:", e);
+      if (challengeNumber == 50) {
+        return DOWNLOAD_DOTNET_ERROR;
+      }
       return ERROR_EXECUTION;
     }
   }
@@ -68,23 +74,32 @@ public class BinaryExecutionHelper {
    * @return the actual answer
    */
   public String executeCommand(String guess, String fileName) {
-    Operation operation;
+    BinaryInstructionForFile binaryInstructionForFile;
     if (Strings.isNullOrEmpty(guess)) {
-      operation = Operation.Spoil;
+      binaryInstructionForFile = BinaryInstructionForFile.Spoil;
     } else {
-      operation = Operation.Guess;
+      binaryInstructionForFile = BinaryInstructionForFile.Guess;
     }
     try {
       File execFile = createTempExecutable(fileName);
-      String result = executeCommand(execFile, operation, guess);
+      String result = executeCommand(execFile, binaryInstructionForFile, guess);
       deleteFile(execFile);
       log.info(
           "stdout challenge {}: {}",
           challengeNumber,
           result.lines().collect(Collectors.joining("")));
+      if (!Strings.isNullOrEmpty(result) && result.contains("command not found")) {
+        if (challengeNumber == 50) {
+          return DOWNLOAD_DOTNET_ERROR;
+        }
+        return ERROR_EXECUTION;
+      }
       return result;
     } catch (Exception e) {
       log.warn("Error executing:", e);
+      if (challengeNumber == 50) {
+        return DOWNLOAD_DOTNET_ERROR;
+      }
       executionException = e;
       return ERROR_EXECUTION;
     }
@@ -93,7 +108,8 @@ public class BinaryExecutionHelper {
   @SuppressFBWarnings(
       value = "COMMAND_INJECTION",
       justification = "We check for various injection methods and counter those")
-  private String executeCommand(File execFile, Operation operation, String guess)
+  private String executeCommand(
+      File execFile, BinaryInstructionForFile binaryInstructionForFile, String guess)
       throws IOException, InterruptedException {
     ProcessBuilder ps;
 
@@ -102,7 +118,7 @@ public class BinaryExecutionHelper {
         || stringContainsCommandChainToken(guess)) {
       return BinaryExecutionHelper.ERROR_EXECUTION;
     }
-    if (operation.equals(Operation.Spoil)) {
+    if (binaryInstructionForFile.equals(BinaryInstructionForFile.Spoil)) {
       ps = new ProcessBuilder(execFile.getPath(), "spoil");
     } else {
       if (execFile.getPath().contains("golang")) {
@@ -194,7 +210,7 @@ public class BinaryExecutionHelper {
       log.info("While we detected windows, please note that it is officially not supported.");
     } else if (useLinux()) {
       fileName = fileName + "-linux";
-      if (useMusl()) {
+      if (useMusl() && !fileName.contains("golang")) {
         fileName = fileName + "-musl";
       }
     }
@@ -213,7 +229,42 @@ public class BinaryExecutionHelper {
       log.info("setting the file {} executable failed... rest can be ignored", execFile.getPath());
     }
     FileUtils.copyFile(challengeFile, execFile);
+    if (useArm() && !useLinux() && !useWindows()) {
+      // we have an aarch macos
+      log.info(
+          "We are on Mac os with ARM let's use  xattr -d com.apple.quarantine on {}",
+          execFile.getPath());
+      xattrMacOSExecFile(execFile);
+    }
     return execFile;
+  }
+
+  @SuppressFBWarnings(
+      value = "COMMAND_INJECTION",
+      justification = "We check for various injection methods and counter those")
+  private static void xattrMacOSExecFile(File execFile) {
+    try {
+      if (!(execFile != null
+          && execFile.exists()
+          && !Strings.isNullOrEmpty(execFile.getPath())
+          && execFile.getPath().contains("wrongsecrets"))) {
+        log.info("The execfile is not properly setup, returning");
+        return;
+      }
+      ProcessBuilder ps =
+          new ProcessBuilder("/usr/bin/xattr", "-d", "com.apple.quarantine", execFile.getPath());
+      ps.redirectErrorStream(true);
+      Process pr = ps.start();
+      try (BufferedReader in =
+          new BufferedReader(new InputStreamReader(pr.getInputStream(), StandardCharsets.UTF_8))) {
+        String result = in.readLine();
+        log.info("result of xatr operation: " + result);
+      } catch (IOException e) {
+        log.warn("error while reading executable file", e);
+      }
+    } catch (IOException e) {
+      log.warn("error while reading executable file", e);
+    }
   }
 
   private void deleteFile(File execFile) {

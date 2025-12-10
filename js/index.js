@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
-function secret () {
-  const password = 'jLJIQZM=' + 9 + 'aG7l' + 6 + 'LAQ=' + 2 + 'UdiM' + 7
-  return password
-}
+
+ function secret() {
+ var password = "FzwHftU=" + 9 + "upur" + 6 + "noQ=" + 2 + "De0q" + 7;
+ return password;
+ }

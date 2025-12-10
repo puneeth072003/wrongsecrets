@@ -22,6 +22,9 @@ locals {
 
 provider "aws" {
   region = var.region
+  default_tags {
+    tags = var.tags
+  }
 }
 
 provider "random" {}
@@ -37,7 +40,7 @@ data "aws_availability_zones" "available" {}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 4.0.1"
+  version = "~> 6.4.0"
 
   name                 = "${var.cluster_name}-vpc"
   cidr                 = local.vpc_cidr
@@ -62,65 +65,31 @@ module "vpc" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "19.13.1"
+  version = "21.4.0"
 
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
+  name               = var.cluster_name
+  kubernetes_version = var.cluster_version
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
 
-  cluster_endpoint_private_access = true
-  cluster_endpoint_public_access  = true
+  endpoint_private_access = true
+  endpoint_public_access  = true
 
-  cluster_endpoint_public_access_cidrs = ["${data.http.ip.response_body}/32"]
+  endpoint_public_access_cidrs = ["${data.http.ip.response_body}/32"]
 
-  enable_irsa = true
+  #create_auto_mode_iam_resources = true
 
-  eks_managed_node_group_defaults = {
-    disk_size       = 50
-    disk_type       = "gp3"
-    disk_throughput = 150
-    disk_iops       = 3000
-    instance_types  = ["t3a.large"]
+  enable_cluster_creator_admin_permissions = true
 
-    iam_role_additional_policies = {
-      AmazonEKSWorkerNodePolicy : "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-      AmazonEKS_CNI_Policy : "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-      AmazonEC2ContainerRegistryReadOnly : "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-      AmazonSSMManagedInstanceCore : "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
-      AmazonEKSVPCResourceController : "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController",
-      AmazonEBSCSIDriverPolicy : "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
-    }
+  upgrade_policy = {
+    support_type = "STANDARD"
   }
 
-  eks_managed_node_groups = {
-    bottlerocket_default = {
-      use_custom_launch_template = false
-      min_size                   = 1
-      max_size                   = 3
-      desired_size               = 1
-      capacity_type              = "SPOT"
-
-      ami_type = "BOTTLEROCKET_x86_64"
-      platform = "bottlerocket"
-    }
+  compute_config = {
+    enabled    = true
+    node_pools = ["general-purpose", "system"]
   }
-
-  node_security_group_additional_rules = {
-    aws_lb_controller_webhook = {
-      description                   = "Cluster API to AWS LB Controller webhook"
-      protocol                      = "all"
-      from_port                     = 9443
-      to_port                       = 9443
-      type                          = "ingress"
-      source_cluster_security_group = true
-    }
-  }
-
-  tags = {
-    Environment = "test"
-    Application = "wrongsecrets"
-  }
+  tags = var.tags
 }

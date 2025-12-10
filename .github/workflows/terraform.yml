@@ -23,9 +23,9 @@ jobs:
     name: terraform-fmt
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: hashicorp/setup-terraform@v2
+      - uses: actions/checkout@v5
+      - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 0.13.1
+          terraform_version: 1.9.8
       - run: terraform init
       - run: terraform fmt
